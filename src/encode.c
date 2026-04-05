@@ -3551,19 +3551,23 @@ dwg_encode (Dwg_Data *restrict dwg, Bit_Chain *restrict dat)
           case SECTION_APPINFOHISTORY:
             {
               Dwg_AppInfoHistory *_obj = &dwg->appinfohistory;
-              if (!_obj->size || !_obj->unknown_bits)
-                break;
               bit_chain_alloc (&sec_dat[type]);
               str_dat = hdl_dat = dat = &sec_dat[type];
               bit_chain_set_version (dat, old_dat);
-              bit_write_TF (dat, _obj->unknown_bits, _obj->size);
+              if (_obj->size && _obj->unknown_bits)
+                bit_write_TF (dat, _obj->unknown_bits, _obj->size);
+              else
+                {
+                  bit_chain_free (&sec_dat[type]);
+                  break;
+                }
               LOG_TRACE ("-size: %" PRIuSIZE "\n", dat->byte);
             }
             break;
           case SECTION_FILEDEPLIST:
             {
               Dwg_FileDepList *_obj = &dwg->filedeplist;
-              if (filedeplist_is_empty (_obj))
+              if (filedeplist_is_empty (_obj) && !(dwg->opts & DWG_OPTS_INDXF))
                 break;
               bit_chain_alloc (&sec_dat[type]);
               str_dat = hdl_dat = dat = &sec_dat[type];
@@ -3750,10 +3754,11 @@ dwg_encode (Dwg_Data *restrict dwg, Bit_Chain *restrict dat)
                     sec->number = si + 1; // index starting at 1
                     if (type < SECTION_INFO)
                       {
-                        // data section: on-disk = 32-byte encrypted page
-                        // header + actual content (no padding to max_decomp)
-                        sec->size = 32 + page_content;
-                        sec->decomp_data_size = page_content;
+                        // data sections are written as fixed-size pages. The
+                        // final page is zero-padded up to max_decomp_size, and
+                        // the section map stores that padded size.
+                        sec->size = 32 + max_decomp_size;
+                        sec->decomp_data_size = max_decomp_size;
                       }
                     else
                       {
@@ -4028,6 +4033,21 @@ dwg_encode (Dwg_Data *restrict dwg, Bit_Chain *restrict dat)
               dwg->fhdr.r2004_header.decomp_data_size = smap_data_size;
             }
 
+          // Data sections are written as fixed-size max_decomp_size pages.
+          // Zero-pad the last page so the buffer is safe to read from.
+          if (type < SECTION_INFO && sec_dat[type].byte > 0)
+            {
+              size_t padded = ((sec_dat[type].byte + max_decomp_size - 1)
+                               / max_decomp_size)
+                              * max_decomp_size;
+              if (padded > sec_dat[type].size)
+                bit_chain_alloc_size (&sec_dat[type],
+                                      padded - sec_dat[type].size);
+              if (padded > sec_dat[type].byte)
+                memset (&sec_dat[type].chain[sec_dat[type].byte], 0,
+                        padded - sec_dat[type].byte);
+            }
+
           LOG_TRACE ("Write %s pages @%" PRIuSIZE " (%u/%" PRIuSIZE ")\n",
                      dwg_section_name (dwg, type), dat->byte,
                      info->num_sections, sec_dat[type].size);
@@ -4219,15 +4239,16 @@ dwg_encode (Dwg_Data *restrict dwg, Bit_Chain *restrict dat)
       dat->byte = oldpos;
     }
 
-    // Reserve space for secondheader (108 bytes, copy of encrypted
-    // R2004_Header without padding)
+    // Reserve space for the trailing secondheader area. ODA expects a blank
+    // 20-byte System Map page header followed by the 108-byte encrypted
+    // R2004_Header copy.
     {
       size_t secondheader_pos = dat->byte;
       dwg->fhdr.r2004_header.secondheader_address
-          = (BITCODE_RLL)secondheader_pos - 0x100;
-      if (dat->byte + 108 > dat->size)
-        bit_chain_alloc_size (dat, 108);
-      dat->byte += 108;
+          = (BITCODE_RLL)secondheader_pos + 20;
+      if (dat->byte + 128 > dat->size)
+        bit_chain_alloc_size (dat, 128);
+      dat->byte += 128;
       LOG_TRACE ("secondheader reserved @0x%" PRIX64 "\n",
                  (uint64_t)secondheader_pos);
     }
@@ -4269,6 +4290,8 @@ dwg_encode (Dwg_Data *restrict dwg, Bit_Chain *restrict dat)
             _obj->header_size = 108;
           if (!_obj->x04)
             _obj->x04 = 4;
+          if (!_obj->unknown_long)
+            _obj->unknown_long = 1;
           if (!_obj->x20)
             _obj->x20 = 0x20;
           if (!_obj->x80)
@@ -4323,13 +4346,20 @@ dwg_encode (Dwg_Data *restrict dwg, Bit_Chain *restrict dat)
           LOG_ERROR ("r2004_file_header encryption error");
           return error | DWG_ERR_INVALIDDWG;
         }
-      // Write secondheader: copy of encrypted R2004_Header (108 bytes,
-      // without the 12-byte padding)
+      // Write secondheader: a blank System Map page header followed by a copy
+      // of the encrypted R2004_Header (108 bytes, without the 12-byte
+      // padding).
       {
-        size_t secondheader_pos = (size_t)_obj->secondheader_address + 0x100;
-        memcpy (&dat->chain[secondheader_pos], &dat->chain[0x80], 108);
+        size_t secondheader_pos = (size_t)_obj->secondheader_address - 20;
+        memset (&dat->chain[secondheader_pos], 0, 20);
+        dat->chain[secondheader_pos] = 0x3b;
+        dat->chain[secondheader_pos + 1] = 0x0e;
+        dat->chain[secondheader_pos + 2] = 0x63;
+        dat->chain[secondheader_pos + 3] = 0x41;
+        dat->chain[secondheader_pos + 12] = 0x02;
+        memcpy (&dat->chain[secondheader_pos + 20], &dat->chain[0x80], 108);
         LOG_TRACE ("secondheader written @0x%" PRIX64 "\n",
-                   (uint64_t)secondheader_pos);
+                   (uint64_t)(secondheader_pos + 20));
       }
     } // R2004_Header
   } // R_2004
