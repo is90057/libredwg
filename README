@@ -14,8 +14,8 @@ think is not the best strategy for a free software project which aims
 to get lots of contributors. LibreDWG is written in English. At the
 moment our decoder (i.e. reader) is done, it can read all DWG
 versions, just some very advanced R2010+ objects fail to read and are
-skipped over. The writer is good enough for R1.4 - R2004.
-R2010-R2018 write support is coming soon. Among the
+skipped over. The writer is good enough for everything but R2007.
+R2010-R2018 writing leads to CRC errors still. Among the
 example applications we wrote using LibreDWG is a reader, a writer, a
 rewriter (i.e. saveas), an initial SVG and Postscript conversion, dxf
 and json converters, dwggrep to search for text, and dwglayer to print
@@ -30,7 +30,7 @@ convert to unicode/UTF-8.
 We also maintain a diff document for our internal fixed ODA-5.4.1 spec
 at doc/ODA-5.4.2-libredwg-diff.pdf
 
-For contact file a ticket or email the package maintainers:
+For security contact file a ticket or email the package maintainers:
 
 Reini Urban <rurban AT cpan.org>
 
@@ -58,6 +58,9 @@ Optionally:
 - gperf to update static hashes for several API's
   Only needed when you added objects or changed the dwg.spec significantly
 - cmake, ninja
+- ODAFileConverter from https://www.opendesign.com/guestfiles/oda_file_converter
+  for doing cross-checks.
+- xvfb-run from xvfb/xorg-x11-server-Xvfb for silencing ODAFileConverter popups.
 - TeXinfo for building the docs
 - SWIG 1.7+
 - Python 2.7 or 3.x development headers (debian: python-dev; yum: python-devel)
@@ -183,10 +186,11 @@ The programs and examples directories contains some application code
 that uses our lib:
 
 * dwgread -- A DWG reader supporting various output formats, such as
-  JSON, DXF, DXFB, GeoJSON. Later also YAML, XML/OGR, GPX, SVG, PS.
+  JSON, DXF, DXFB, GeoJSON.
 
 * dwgwrite -- A DWG writer supporting various input formats, such as DXF, DXFB, JSON.
-  GeoJSON, YAML, XML/OGR, GPX are under construction.
+
+* dxfwrite -- A DXF writer supporting various input formats, such as DWG, DXF, DXFB, JSON.
 
 * dwg2dxf -- Converts a DWG to a DXF (ascii or binary, minimal or full), optionally
   under a different version. About 90% coverage.

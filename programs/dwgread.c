@@ -83,7 +83,6 @@ help (void)
 #    else
   printf ("  -O fmt,  --format fmt     fmt: DXF, DXFB\n");
 #    endif
-  printf ("           Planned output formats:  YAML, XML/OGR, GPX, SVG, PS\n");
   printf ("  -o outfile                also defines the output fmt. Default: "
           "stdout\n");
 #  endif
@@ -94,7 +93,7 @@ help (void)
   printf ("  -v[0-9]     verbosity\n");
 #  ifndef DISABLE_DXF
 #    ifndef DISABLE_JSON
-  printf ("  -O fmt      fmt: DXF, DXFB, JSON, MinJSON, GeoJSON\n");
+  printf ("  -O fmt      fmt: DXF, DXFB or DXB, JSON, minJSON, GeoJSON\n");
 #    else
   printf ("  -O fmt      fmt: DXF, DXFB\n");
 #    endif
@@ -190,6 +189,12 @@ main (int argc, char *argv[])
             {
               free ((char *)fmt);
               fmt = strdup ("dxfb");
+            }
+          if (!strcasecmp (fmt, "MINJSON"))
+            {
+              free ((char *)fmt);
+              fmt = strdup ("json");
+              opts |= DWG_OPTS_MINIMAL;
             }
           break;
         case 'o':
