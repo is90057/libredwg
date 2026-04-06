@@ -4773,6 +4773,82 @@ encode_preR13_POLYLINE (Bit_Chain *restrict dat, Dwg_Object *restrict obj)
 }
 */
 
+// Convert modern fixedtype to R11 entity type code (for DXF-roundtrip
+// encoding)
+static Dwg_Object_Type_r11
+fixedtype_to_r11_type (enum DWG_OBJECT_TYPE fixedtype)
+{
+  switch (fixedtype)
+    {
+    case DWG_TYPE_LINE:
+      return DWG_TYPE_LINE_r11;
+    case DWG_TYPE_POINT:
+      return DWG_TYPE_POINT_r11;
+    case DWG_TYPE_CIRCLE:
+      return DWG_TYPE_CIRCLE_r11;
+    case DWG_TYPE_SHAPE:
+      return DWG_TYPE_SHAPE_r11;
+    case DWG_TYPE_REPEAT:
+      return DWG_TYPE_REPEAT_r11;
+    case DWG_TYPE_ENDREP:
+      return DWG_TYPE_ENDREP_r11;
+    case DWG_TYPE_TEXT:
+      return DWG_TYPE_TEXT_r11;
+    case DWG_TYPE_ARC:
+      return DWG_TYPE_ARC_r11;
+    case DWG_TYPE_TRACE:
+      return DWG_TYPE_TRACE_r11;
+    case DWG_TYPE_LOAD:
+      return DWG_TYPE_LOAD_r11;
+    case DWG_TYPE_SOLID:
+      return DWG_TYPE_SOLID_r11;
+    case DWG_TYPE_BLOCK:
+      return DWG_TYPE_BLOCK_r11;
+    case DWG_TYPE_ENDBLK:
+      return DWG_TYPE_ENDBLK_r11;
+    case DWG_TYPE_INSERT:
+    case DWG_TYPE_MINSERT:
+      return DWG_TYPE_INSERT_r11;
+    case DWG_TYPE_ATTDEF:
+      return DWG_TYPE_ATTDEF_r11;
+    case DWG_TYPE_ATTRIB:
+      return DWG_TYPE_ATTRIB_r11;
+    case DWG_TYPE_SEQEND:
+      return DWG_TYPE_SEQEND_r11;
+    case DWG_TYPE_JUMP:
+      return DWG_TYPE_JUMP_r11;
+    case DWG_TYPE_POLYLINE_2D:
+    case DWG_TYPE_POLYLINE_3D:
+    case DWG_TYPE_POLYLINE_PFACE:
+    case DWG_TYPE_POLYLINE_MESH:
+      return DWG_TYPE_POLYLINE_r11;
+    case DWG_TYPE_VERTEX_2D:
+    case DWG_TYPE_VERTEX_3D:
+    case DWG_TYPE_VERTEX_MESH:
+    case DWG_TYPE_VERTEX_PFACE:
+    case DWG_TYPE_VERTEX_PFACE_FACE:
+      return DWG_TYPE_VERTEX_r11;
+    case DWG_TYPE__3DLINE:
+      return DWG_TYPE_3DLINE_r11;
+    case DWG_TYPE__3DFACE:
+      return DWG_TYPE_3DFACE_r11;
+    case DWG_TYPE_DIMENSION_ORDINATE:
+    case DWG_TYPE_DIMENSION_LINEAR:
+    case DWG_TYPE_DIMENSION_ALIGNED:
+    case DWG_TYPE_DIMENSION_ANG2LN:
+    case DWG_TYPE_DIMENSION_ANG3PT:
+    case DWG_TYPE_DIMENSION_DIAMETER:
+    case DWG_TYPE_DIMENSION_RADIUS:
+      return DWG_TYPE_DIMENSION_r11;
+    case DWG_TYPE_VIEWPORT:
+      return DWG_TYPE_VIEWPORT_r11;
+    case DWG_TYPE_UNUSED:
+      return DWG_TYPE_UNUSED_r11;
+    default:
+      return DWG_TYPE_UNKNOWN_r11;
+    }
+}
+
 // blocks might be mixed in-between normal entities. from BLOCK to ENDBLK
 // extras begin with a jump, until a jump back
 static BITCODE_RL
@@ -4852,8 +4928,10 @@ encode_preR13_entities (EntitySectionIndexR11 section, Bit_Chain *restrict dat,
                          dat->byte);
               continue;
             }
-          // extras entities come after all block entities
-          if (past_blocks)
+          // extras entities come after all block entities,
+          // but mspace entities (entmode==2) may follow blocks in DXF
+          // roundtrip
+          if (past_blocks && obj->tio.entity->entmode != 2)
             {
               LOG_TRACE ("Skip extras %s in entities section, "
                          "number: %d, type: %d, Addr: %zx (0x%zx)\n",
@@ -4935,8 +5013,9 @@ encode_preR13_entities (EntitySectionIndexR11 section, Bit_Chain *restrict dat,
               past_blocks = true;
               continue; // skip block entities
             }
-          if (!past_blocks)
-            continue; // skip main entities (before blocks)
+          if (!past_blocks || obj->tio.entity->entmode == 2)
+            continue; // skip main/mspace entities (entmode==2 goes to
+                      // ENTITIES)
         }
 
       if (dat->byte + obj->size < dat->size)
@@ -4955,9 +5034,16 @@ encode_preR13_entities (EntitySectionIndexR11 section, Bit_Chain *restrict dat,
       }
       LATER_VERSIONS
       {
-        bit_write_RC (dat, obj->type);
+        // Convert modern fixedtype to R11 type for DXF-roundtrip entities
+        Dwg_Object_Type_r11 r11type = fixedtype_to_r11_type (obj->fixedtype);
+        if (r11type == DWG_TYPE_UNUSED_r11 || r11type == DWG_TYPE_UNKNOWN_r11)
+          r11type = (Dwg_Object_Type_r11)(obj->type
+                                          & 0x7F); // fallback, keep as is
+        if (obj->type & 0x80)
+          r11type |= 0x80; // preserve deleted flag
+        bit_write_RC (dat, (BITCODE_RC)r11type);
         size_pos = dat->byte + 1; // past the flag
-        LOG_INFO ("type: %d [RC]\n", obj->type);
+        LOG_INFO ("type: %d [RC]\n", (int)r11type);
       }
 
 #define CASE_ENCODE_TYPE(ty)                                                  \

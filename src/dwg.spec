@@ -628,6 +628,30 @@ DWG_ENTITY (BLOCK)
   }
 #endif
 #ifdef IS_DXF
+  VERSIONS (R_2_0b, R_11)
+  {
+    Dwg_Object_BLOCK_HEADER *_hdr = NULL;
+    Dwg_Object *hdr
+        = _ent->ownerhandle && _ent->ownerhandle->obj
+              ? _ent->ownerhandle->obj : NULL;
+    if (!hdr)
+      hdr = dwg_ref_object (dwg, _ent->ownerhandle);
+    if (hdr && hdr->fixedtype == DWG_TYPE_BLOCK_HEADER)
+      _hdr = hdr->tio.object->tio.BLOCK_HEADER;
+    else if (_ent->entmode == 2) {
+      hdr = dwg_model_space_object (dwg);
+      _hdr = hdr ? hdr->tio.object->tio.BLOCK_HEADER : NULL;
+    }
+    else if (_ent->entmode == 1) {
+      hdr = dwg_paper_space_object (dwg);
+      _hdr = hdr ? hdr->tio.object->tio.BLOCK_HEADER : NULL;
+    }
+    if (_hdr && bit_empty_T (dat, _obj->name)) {
+      VALUE_T (_hdr->name, 2);
+    } else {
+      BLOCK_NAME (name, 2);
+    }
+  }
   SINCE (R_13b1)
   {
     Dwg_Object_BLOCK_HEADER *_hdr = NULL;
