@@ -62,6 +62,7 @@ if [ ! -x "$ODAFileConverter" ]; then
     baseFileConverter=TeighaFileConverter
 fi
 if test -x "$ODAFileConverter" && command -v xvfb-run 2>/dev/null; then
+    baseFileConverter="xvfb-run $baseFileConverter"
     ODAFileConverter="xvfb-run $ODAFileConverter"
 fi
 
