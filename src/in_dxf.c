@@ -1722,6 +1722,12 @@ dxf_fixup_header (Bit_Chain *dat, Dwg_Data *dwg)
       hdr->maint_rel_version = 0xf; // 0x6 - 0xf
       hdr->thumbnail_address = 220;
     }
+  // maint_version controls whether bitsize_hi is written in section headers
+  // (maint_version > 3). All R_2004+ files need this.
+  // $ACADMAINTVER is stored in header_vars, copy to file header.
+  if (!hdr->maint_version)
+    hdr->maint_version
+        = vars->ACADMAINTVER ? vars->ACADMAINTVER : hdr->dwg_version;
 
   if (hdr->version >= R_2000 || !hdr->app_dwg_version)
     hdr->app_dwg_version = hdr->dwg_version;
