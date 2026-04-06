@@ -7194,6 +7194,7 @@ new_table_control (const char *restrict name, Bit_Chain *restrict dat,
               BITCODE_H *hdls;
               // can be -1
               BITCODE_BL num_entries = pair->value.i < 0 ? 0 : pair->value.i;
+              BITCODE_BL zero_entries = 0;
               if (num_entries > INT32_MAX // BS overflow
                   && obj->fixedtype != DWG_TYPE_BLOCK_CONTROL
                   && obj->fixedtype != DWG_TYPE_LAYER_CONTROL
@@ -7203,11 +7204,13 @@ new_table_control (const char *restrict name, Bit_Chain *restrict dat,
                   LOG_ERROR ("%s.num_entries BS overflow", obj->name);
                   num_entries = 0;
                 }
-              hdls = (BITCODE_H *)xcalloc (num_entries, sizeof (BITCODE_H));
-              if (!hdls)
-                num_entries = 0;
+              // Pre-allocate for capacity but start at 0: entries are added
+              // via PUSH_HV so they land at index 0, 1, ... not after NULLs
+              hdls = num_entries ? (BITCODE_H *)xcalloc (num_entries,
+                                                         sizeof (BITCODE_H))
+                                 : NULL;
               dwg_dynapi_entity_set_value (_obj, obj->name, "num_entries",
-                                           &num_entries, 1);
+                                           &zero_entries, 1);
               LOG_TRACE ("%s.num_entries = %u [BL 70]\n", ctrlname,
                          num_entries);
               dwg_dynapi_entity_set_value (_obj, obj->name, "entries", &hdls,
@@ -7301,7 +7304,11 @@ find_tablehandle (Dwg_Data *restrict dwg, Dxf_Pair *restrict pair)
     ref = dwg_find_tablehandle_silent (dwg, pair->value.s.ptr, "UCS");
 
   if (ref) // turn a 2 (hardowner) into a 5 (softref)
-    return dwg_add_handleref (dwg, 5, ref->absolute_ref, NULL);
+    {
+      BITCODE_H newref = dwg_add_handleref (dwg, 5, ref->absolute_ref, NULL);
+      newref->r11_idx = ref->r11_idx; // preserve table index for pre-R13
+      return newref;
+    }
   /* I think all these >300 are given by hex value, not by name */
   if (!ref && pair->code > 300)
     {

@@ -635,6 +635,7 @@ void *memmem (const void *h0, size_t k, const void *n0, size_t l)
       _obj->hvfield[_obj->numfield] = ref;                                    \
       LOG_TRACE ("%s[%d] = " FORMAT_REF " [H]\n", #hvfield, _obj->numfield,   \
                  ARGS_REF (_obj->hvfield[_obj->numfield]));                   \
+      ref->r11_idx = (BITCODE_RSd)_obj->numfield;                             \
       _obj->numfield++;                                                       \
     }
 
@@ -648,12 +649,13 @@ void *memmem (const void *h0, size_t k, const void *n0, size_t l)
       _obj->hvfield[_obj->numfield] = ref;                                    \
       LOG_TRACE ("%s[%d] = " FORMAT_REF " [H]\n", #hvfield, _obj->numfield,   \
                  ARGS_REF (_obj->hvfield[_obj->numfield]));                   \
+      ref->r11_idx = (BITCODE_RSd)_obj->numfield;                             \
       _obj->numfield++;                                                       \
     }
 
 // no need to free global handles, just the HV.
 // returns the last
-#define POP_HV(_obj, numfield, hvfield) _obj->hvfield[--_obj->numfield]
+#define POP_HV(_obj, numfield, hvfield)  _obj->hvfield[--_obj->numfield]
 // returns the first
 #define SHIFT_HV(_obj, numfield, hvfield)                                     \
   shift_hv (_obj->hvfield, &_obj->numfield)
