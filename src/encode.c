@@ -1781,6 +1781,7 @@ encode_r11_auxheader (Bit_Chain *restrict dat, Dwg_Data *restrict dwg)
     bit_write_RL_BE (dat, _obj->HANDSEED);
     LOG_TRACE ("HANDSEED: " FORMAT_RLx "\n", _obj->HANDSEED);
   }
+  FIELD_RL (plot_stamp, 0);
   FIELD_RS (num_aux_tables, 0);
   encode_preR13_section_chk (SECTION_BLOCK, dat, dwg);
   encode_preR13_section_chk (SECTION_LAYER, dat, dwg);
