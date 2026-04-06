@@ -83,6 +83,17 @@ void dwg_upgrade_MLINESTYLE (Dwg_Data *restrict dwg,
 static Dwg_Version_Type cur_ver = R_INVALID;
 static BITCODE_BL rcount1 = 0, rcount2 = 0;
 
+static size_t
+bit_umc_size (BITCODE_UMC value)
+{
+  unsigned char bytes[8] = { 0 };
+  Bit_Chain dat = EMPTY_CHAIN (sizeof (bytes));
+
+  dat.chain = bytes;
+  bit_write_UMC (&dat, value);
+  return dat.byte + (dat.bit ? 1 : 0);
+}
+
 /* section_order: A static array of section types.
    SECTION_R13_SIZE is the size and the sentinel.
  */
@@ -5329,6 +5340,7 @@ dwg_encode_add_object (Dwg_Object *restrict obj, Bit_Chain *restrict dat,
 {
   int error = 0;
   size_t end_address = address + obj->size;
+  size_t old_handlestream_size_bytes = 0;
   Dwg_Data *dwg = obj->parent;
 
   PRE (R_2004a)
@@ -5379,6 +5391,7 @@ dwg_encode_add_object (Dwg_Object *restrict obj, Bit_Chain *restrict dat,
   {
     if (!obj->handlestream_size && obj->bitsize)
       obj->handlestream_size = obj->size * 8 - obj->bitsize;
+    old_handlestream_size_bytes = bit_umc_size (obj->handlestream_size);
     bit_write_UMC (dat, obj->handlestream_size);
     obj->address = dat->byte;
     bit_write_BOT (dat, obj->type);
@@ -5817,9 +5830,46 @@ dwg_encode_add_object (Dwg_Object *restrict obj, Bit_Chain *restrict dat,
       LOG_TRACE ("-size: %u [MS] @%" PRIuSIZE "\n", obj->size, address);
       SINCE (R_2010b)
       {
+        size_t new_handlestream_size_bytes;
+
         if (!obj->handlestream_size && obj->bitsize)
           obj->handlestream_size = (obj->size * 8) - obj->bitsize;
+        new_handlestream_size_bytes = bit_umc_size (obj->handlestream_size);
+        if (new_handlestream_size_bytes != old_handlestream_size_bytes)
+          {
+            long delta = (long)new_handlestream_size_bytes
+                         - (long)old_handlestream_size_bytes;
+            size_t bot_address = dat->byte + old_handlestream_size_bytes;
+            size_t new_bot_address = delta > 0 ? bot_address + (size_t)delta
+                                               : bot_address - (size_t)-delta;
+            size_t obj_end = (pos + 7) / 8;
+            size_t move_size
+                = obj_end > bot_address ? obj_end - bot_address : 0;
+
+            LOG_TRACE ("-handlestream_size width: %" PRIuSIZE " => %" PRIuSIZE
+                       " @%" PRIuSIZE "\n",
+                       old_handlestream_size_bytes,
+                       new_handlestream_size_bytes, dat->byte);
+            if (delta > 0 && obj_end + (size_t)delta > dat->size)
+              bit_chain_alloc_size (dat,
+                                    (obj_end + (size_t)delta) - dat->size);
+            if (move_size)
+              memmove (&dat->chain[new_bot_address], &dat->chain[bot_address],
+                       move_size);
+            if (delta > 0)
+              {
+                obj->address += (size_t)delta;
+                pos += (size_t)delta * 8;
+              }
+            else
+              {
+                obj->address -= (size_t)-delta;
+                pos -= (size_t)-delta * 8;
+              }
+            old_handlestream_size_bytes = new_handlestream_size_bytes;
+          }
         bit_write_UMC (dat, obj->handlestream_size);
+        obj->address = dat->byte;
         LOG_TRACE ("-handlestream_size: " FORMAT_UMC " [UMC]\n",
                    obj->handlestream_size);
       }
