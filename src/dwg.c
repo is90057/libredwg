@@ -2485,7 +2485,7 @@ dwg_ctrl_table (Dwg_Data *restrict dwg, const char *restrict table)
 
   if (!dwg || !table)
     return NULL;
-  if (strEQc (table, "BLOCK"))
+  if (strEQc (table, "BLOCK") || strEQc (table, "BLOCK_HEADER"))
     {
       if (!(ctrl = vars->BLOCK_CONTROL_OBJECT))
         vars->BLOCK_CONTROL_OBJECT = ctrl
@@ -2836,10 +2836,11 @@ dwg_handle_name (Dwg_Data *restrict dwg, const char *restrict table,
 
   if (!dwg || !table || !handle)
     return NULL;
-  if (dwg->header.from_version < R_12 && !handle->absolute_ref)
-    ;
-  else if (!handle->absolute_ref)
-    return NULL;
+  if (!handle->absolute_ref)
+    {
+      if (dwg->header.from_version > R_11)
+        return NULL;
+    }
   loglevel = dwg->opts & DWG_OPTS_LOGLEVEL;
   // look for the _CONTROL table, and search for name in all entries
   ctrl = dwg_ctrl_table (dwg, table);
