@@ -13158,19 +13158,43 @@ dxf_tables_read (Bit_Chain *restrict dat, Dwg_Data *restrict dwg)
                     Dwg_Object_LTYPE *_obj = obj->tio.object->tio.LTYPE;
                     Dwg_Object_LTYPE_CONTROL *_lctrl
                         = ctrl->tio.object->tio.LTYPE_CONTROL;
-                    if (_lctrl->bylayer
-                        && obj->handle.value == _lctrl->bylayer->absolute_ref)
+                    // For pre-R13 DXF (no handles), byblock/bylayer refs have
+                    // abs:0. Fix them now that the handle is known.
+                    if (_lctrl->bylayer && !_lctrl->bylayer->absolute_ref
+                        && _obj->name && !strcasecmp (_obj->name, "ByLayer"))
+                      {
+                        _lctrl->bylayer->absolute_ref = obj->handle.value;
+                        _lctrl->bylayer->handleref.value = obj->handle.value;
+                        dwg->header_vars.LTYPE_BYLAYER = dwg_add_handleref (
+                            dwg, 5, obj->handle.value, obj);
+                        LOG_TRACE ("LTYPE_CONTROL.bylayer = " FORMAT_H
+                                   " [H]\n",
+                                   ARGS_H (obj->handle));
+                      }
+                    else if (_lctrl->byblock && !_lctrl->byblock->absolute_ref
+                             && _obj->name
+                             && !strcasecmp (_obj->name, "ByBlock"))
+                      {
+                        _lctrl->byblock->absolute_ref = obj->handle.value;
+                        _lctrl->byblock->handleref.value = obj->handle.value;
+                        dwg->header_vars.LTYPE_BYBLOCK = dwg_add_handleref (
+                            dwg, 5, obj->handle.value, obj);
+                        LOG_TRACE ("LTYPE_CONTROL.byblock = " FORMAT_H
+                                   " [H]\n",
+                                   ARGS_H (obj->handle));
+                      }
+                    else if (_lctrl->bylayer
+                             && obj->handle.value
+                                    == _lctrl->bylayer->absolute_ref)
                       ;
                     else if (_lctrl->byblock
                              && obj->handle.value
                                     == _lctrl->byblock->absolute_ref)
                       ;
-                    // already exists?
+                    // add if not already in entries
                     else if (find_hv (_lctrl->entries, _lctrl->num_entries,
                                       obj->handle.value)
                              < 0)
-                      ;
-                    else
                       {
                         ref = dwg_add_handleref (dwg, 2, obj->handle.value,
                                                  NULL);
