@@ -2725,6 +2725,26 @@ dwg_find_tablehandle (Dwg_Data *restrict dwg, const char *restrict name,
           LOG_INSANE ("Found %s\n", name);
           if (isnew)
             free (hdlname);
+
+          if (strEQc (table, "LTYPE"))
+            {
+              if (strEQc (name, "BYLAYER") || strEQc (name, "ByLayer"))
+                {
+                  if (!vars->LTYPE_BYLAYER)
+                    vars->LTYPE_BYLAYER = hdlv[i];
+                }
+              else if (strEQc (name, "BYBLOCK") || strEQc (name, "ByBlock"))
+                {
+                  if (!vars->LTYPE_BYBLOCK)
+                    vars->LTYPE_BYBLOCK = hdlv[i];
+                }
+              else if (strEQc (name, "CONTINUOUS")
+                       || strEQc (name, "Continuous"))
+                {
+                  if (!vars->LTYPE_CONTINUOUS)
+                    vars->LTYPE_CONTINUOUS = hdlv[i];
+                }
+            }
           return hdlv[i];
         }
       if (ok && isnew && hdlname)
