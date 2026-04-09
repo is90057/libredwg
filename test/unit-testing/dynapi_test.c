@@ -5858,21 +5858,21 @@ test_header (Dwg_Data *dwg)
 
   }
   {
-    BITCODE_RS circle_zoom_percent;
-    if (dwg_dynapi_header_value (dwg, "circle_zoom_percent", &circle_zoom_percent, NULL)
-        && circle_zoom_percent == dwg->header_vars.circle_zoom_percent)
+    BITCODE_RS circle_zoom;
+    if (dwg_dynapi_header_value (dwg, "circle_zoom", &circle_zoom, NULL)
+        && circle_zoom == dwg->header_vars.circle_zoom)
       pass ();
     else
-      fail ("HEADER.circle_zoom_percent [RS] %hu != %hu", dwg->header_vars.circle_zoom_percent, circle_zoom_percent);
-    circle_zoom_percent++;
-    if (dwg_dynapi_header_set_value (dwg, "circle_zoom_percent", &circle_zoom_percent, 0)
-        && circle_zoom_percent == dwg->header_vars.circle_zoom_percent)
+      fail ("HEADER.circle_zoom [RS] %hu != %hu", dwg->header_vars.circle_zoom, circle_zoom);
+    circle_zoom++;
+    if (dwg_dynapi_header_set_value (dwg, "circle_zoom", &circle_zoom, 0)
+        && circle_zoom == dwg->header_vars.circle_zoom)
       pass ();
     else
-      fail ("HEADER.circle_zoom_percent [RS] set+1 %hu != %hu",
-            dwg->header_vars.circle_zoom_percent, circle_zoom_percent);
-    circle_zoom_percent--;
-    dwg_dynapi_header_set_value (dwg, "circle_zoom_percent", &circle_zoom_percent, 0);
+      fail ("HEADER.circle_zoom [RS] set+1 %hu != %hu",
+            dwg->header_vars.circle_zoom, circle_zoom);
+    circle_zoom--;
+    dwg_dynapi_header_set_value (dwg, "circle_zoom", &circle_zoom, 0);
 
   }
   {
@@ -25781,12 +25781,57 @@ static int test_VIEWPORT (const Dwg_Object *obj)
       return 1;
     }
   {
+    BITCODE_BD BACKZ;
+    if (dwg_dynapi_entity_value (viewport, "VIEWPORT", "BACKZ", &BACKZ, NULL)
+        && BACKZ == viewport->BACKZ)
+      pass ();
+    else
+      fail ("VIEWPORT.BACKZ [BD] %g != %g", viewport->BACKZ, BACKZ);
+    BACKZ++;
+    if (dwg_dynapi_entity_set_value (viewport, "VIEWPORT", "BACKZ", &BACKZ, 0)
+        && BACKZ == viewport->BACKZ)
+      pass ();
+    else
+      fail ("VIEWPORT.BACKZ [BD] set+1 %g != %g", viewport->BACKZ, BACKZ);
+    viewport->BACKZ--;
+  }
+  {
+    BITCODE_BD FRONTZ;
+    if (dwg_dynapi_entity_value (viewport, "VIEWPORT", "FRONTZ", &FRONTZ, NULL)
+        && FRONTZ == viewport->FRONTZ)
+      pass ();
+    else
+      fail ("VIEWPORT.FRONTZ [BD] %g != %g", viewport->FRONTZ, FRONTZ);
+    FRONTZ++;
+    if (dwg_dynapi_entity_set_value (viewport, "VIEWPORT", "FRONTZ", &FRONTZ, 0)
+        && FRONTZ == viewport->FRONTZ)
+      pass ();
+    else
+      fail ("VIEWPORT.FRONTZ [BD] set+1 %g != %g", viewport->FRONTZ, FRONTZ);
+    viewport->FRONTZ--;
+  }
+  {
     BITCODE_2RD GRIDUNIT;
     if (dwg_dynapi_entity_value (viewport, "VIEWPORT", "GRIDUNIT", &GRIDUNIT, NULL)
         && !memcmp (&GRIDUNIT, &viewport->GRIDUNIT, sizeof (BITCODE_2RD)))
         pass ();
     else
         fail ("VIEWPORT.GRIDUNIT [2RD]");
+  }
+  {
+    BITCODE_BD LENSLENGTH;
+    if (dwg_dynapi_entity_value (viewport, "VIEWPORT", "LENSLENGTH", &LENSLENGTH, NULL)
+        && LENSLENGTH == viewport->LENSLENGTH)
+      pass ();
+    else
+      fail ("VIEWPORT.LENSLENGTH [BD] %g != %g", viewport->LENSLENGTH, LENSLENGTH);
+    LENSLENGTH++;
+    if (dwg_dynapi_entity_set_value (viewport, "VIEWPORT", "LENSLENGTH", &LENSLENGTH, 0)
+        && LENSLENGTH == viewport->LENSLENGTH)
+      pass ();
+    else
+      fail ("VIEWPORT.LENSLENGTH [BD] set+1 %g != %g", viewport->LENSLENGTH, LENSLENGTH);
+    viewport->LENSLENGTH--;
   }
   {
     BITCODE_BD SNAPANG;
@@ -25881,27 +25926,27 @@ static int test_VIEWPORT (const Dwg_Object *obj)
     viewport->VIEWSIZE--;
   }
   {
+    BITCODE_BD VIEWTWIST;
+    if (dwg_dynapi_entity_value (viewport, "VIEWPORT", "VIEWTWIST", &VIEWTWIST, NULL)
+        && VIEWTWIST == viewport->VIEWTWIST)
+      pass ();
+    else
+      fail ("VIEWPORT.VIEWTWIST [BD] %g != %g", viewport->VIEWTWIST, VIEWTWIST);
+    VIEWTWIST++;
+    if (dwg_dynapi_entity_set_value (viewport, "VIEWPORT", "VIEWTWIST", &VIEWTWIST, 0)
+        && VIEWTWIST == viewport->VIEWTWIST)
+      pass ();
+    else
+      fail ("VIEWPORT.VIEWTWIST [BD] set+1 %g != %g", viewport->VIEWTWIST, VIEWTWIST);
+    viewport->VIEWTWIST--;
+  }
+  {
     BITCODE_CMC ambient_color;
     if (dwg_dynapi_entity_value (viewport, "VIEWPORT", "ambient_color", &ambient_color, NULL)
         && !memcmp (&ambient_color, &viewport->ambient_color, sizeof (BITCODE_CMC)))
         pass ();
     else
         fail ("VIEWPORT.ambient_color [CMC]");
-  }
-  {
-    BITCODE_BD back_clip_z;
-    if (dwg_dynapi_entity_value (viewport, "VIEWPORT", "back_clip_z", &back_clip_z, NULL)
-        && back_clip_z == viewport->back_clip_z)
-      pass ();
-    else
-      fail ("VIEWPORT.back_clip_z [BD] %g != %g", viewport->back_clip_z, back_clip_z);
-    back_clip_z++;
-    if (dwg_dynapi_entity_set_value (viewport, "VIEWPORT", "back_clip_z", &back_clip_z, 0)
-        && back_clip_z == viewport->back_clip_z)
-      pass ();
-    else
-      fail ("VIEWPORT.back_clip_z [BD] set+1 %g != %g", viewport->back_clip_z, back_clip_z);
-    viewport->back_clip_z--;
   }
   {
     BITCODE_H background;
@@ -25996,21 +26041,6 @@ static int test_VIEWPORT (const Dwg_Object *obj)
     viewport->default_lighting_type--;
   }
   {
-    BITCODE_BD front_clip_z;
-    if (dwg_dynapi_entity_value (viewport, "VIEWPORT", "front_clip_z", &front_clip_z, NULL)
-        && front_clip_z == viewport->front_clip_z)
-      pass ();
-    else
-      fail ("VIEWPORT.front_clip_z [BD] %g != %g", viewport->front_clip_z, front_clip_z);
-    front_clip_z++;
-    if (dwg_dynapi_entity_set_value (viewport, "VIEWPORT", "front_clip_z", &front_clip_z, 0)
-        && front_clip_z == viewport->front_clip_z)
-      pass ();
-    else
-      fail ("VIEWPORT.front_clip_z [BD] set+1 %g != %g", viewport->front_clip_z, front_clip_z);
-    viewport->front_clip_z--;
-  }
-  {
     BITCODE_H* frozen_layers;
     BITCODE_BL count = 0;
     if (dwg_dynapi_entity_value (viewport, "VIEWPORT", "num_frozen_layers", &count, NULL)
@@ -26064,21 +26094,6 @@ static int test_VIEWPORT (const Dwg_Object *obj)
     else
       fail ("VIEWPORT.id [RS] set+1 %hu != %hu", viewport->id, id);
     viewport->id--;
-  }
-  {
-    BITCODE_BD lens_length;
-    if (dwg_dynapi_entity_value (viewport, "VIEWPORT", "lens_length", &lens_length, NULL)
-        && lens_length == viewport->lens_length)
-      pass ();
-    else
-      fail ("VIEWPORT.lens_length [BD] %g != %g", viewport->lens_length, lens_length);
-    lens_length++;
-    if (dwg_dynapi_entity_set_value (viewport, "VIEWPORT", "lens_length", &lens_length, 0)
-        && lens_length == viewport->lens_length)
-      pass ();
-    else
-      fail ("VIEWPORT.lens_length [BD] set+1 %g != %g", viewport->lens_length, lens_length);
-    viewport->lens_length--;
   }
   {
     BITCODE_H named_ucs;
@@ -26196,21 +26211,6 @@ static int test_VIEWPORT (const Dwg_Object *obj)
         pass ();
     else
         fail ("VIEWPORT.sun [H]");
-  }
-  {
-    BITCODE_BD twist_angle;
-    if (dwg_dynapi_entity_value (viewport, "VIEWPORT", "twist_angle", &twist_angle, NULL)
-        && twist_angle == viewport->twist_angle)
-      pass ();
-    else
-      fail ("VIEWPORT.twist_angle [BD] %g != %g", viewport->twist_angle, twist_angle);
-    twist_angle++;
-    if (dwg_dynapi_entity_set_value (viewport, "VIEWPORT", "twist_angle", &twist_angle, 0)
-        && twist_angle == viewport->twist_angle)
-      pass ();
-    else
-      fail ("VIEWPORT.twist_angle [BD] set+1 %g != %g", viewport->twist_angle, twist_angle);
-    viewport->twist_angle--;
   }
   {
     BITCODE_B ucs_at_origin;
@@ -60023,6 +60023,51 @@ static int test_VIEW (const Dwg_Object *obj)
       return 1;
     }
   {
+    BITCODE_BD BACKZ;
+    if (dwg_dynapi_entity_value (view, "VIEW", "BACKZ", &BACKZ, NULL)
+        && BACKZ == view->BACKZ)
+      pass ();
+    else
+      fail ("VIEW.BACKZ [BD] %g != %g", view->BACKZ, BACKZ);
+    BACKZ++;
+    if (dwg_dynapi_entity_set_value (view, "VIEW", "BACKZ", &BACKZ, 0)
+        && BACKZ == view->BACKZ)
+      pass ();
+    else
+      fail ("VIEW.BACKZ [BD] set+1 %g != %g", view->BACKZ, BACKZ);
+    view->BACKZ--;
+  }
+  {
+    BITCODE_BD FRONTZ;
+    if (dwg_dynapi_entity_value (view, "VIEW", "FRONTZ", &FRONTZ, NULL)
+        && FRONTZ == view->FRONTZ)
+      pass ();
+    else
+      fail ("VIEW.FRONTZ [BD] %g != %g", view->FRONTZ, FRONTZ);
+    FRONTZ++;
+    if (dwg_dynapi_entity_set_value (view, "VIEW", "FRONTZ", &FRONTZ, 0)
+        && FRONTZ == view->FRONTZ)
+      pass ();
+    else
+      fail ("VIEW.FRONTZ [BD] set+1 %g != %g", view->FRONTZ, FRONTZ);
+    view->FRONTZ--;
+  }
+  {
+    BITCODE_BD LENSLENGTH;
+    if (dwg_dynapi_entity_value (view, "VIEW", "LENSLENGTH", &LENSLENGTH, NULL)
+        && LENSLENGTH == view->LENSLENGTH)
+      pass ();
+    else
+      fail ("VIEW.LENSLENGTH [BD] %g != %g", view->LENSLENGTH, LENSLENGTH);
+    LENSLENGTH++;
+    if (dwg_dynapi_entity_set_value (view, "VIEW", "LENSLENGTH", &LENSLENGTH, 0)
+        && LENSLENGTH == view->LENSLENGTH)
+      pass ();
+    else
+      fail ("VIEW.LENSLENGTH [BD] set+1 %g != %g", view->LENSLENGTH, LENSLENGTH);
+    view->LENSLENGTH--;
+  }
+  {
     BITCODE_BS UCSORTHOVIEW;
     if (dwg_dynapi_entity_value (view, "VIEW", "UCSORTHOVIEW", &UCSORTHOVIEW, NULL)
         && UCSORTHOVIEW == view->UCSORTHOVIEW)
@@ -60083,6 +60128,21 @@ static int test_VIEW (const Dwg_Object *obj)
     view->VIEWSIZE--;
   }
   {
+    BITCODE_BD VIEWTWIST;
+    if (dwg_dynapi_entity_value (view, "VIEW", "VIEWTWIST", &VIEWTWIST, NULL)
+        && VIEWTWIST == view->VIEWTWIST)
+      pass ();
+    else
+      fail ("VIEW.VIEWTWIST [BD] %g != %g", view->VIEWTWIST, VIEWTWIST);
+    VIEWTWIST++;
+    if (dwg_dynapi_entity_set_value (view, "VIEW", "VIEWTWIST", &VIEWTWIST, 0)
+        && VIEWTWIST == view->VIEWTWIST)
+      pass ();
+    else
+      fail ("VIEW.VIEWTWIST [BD] set+1 %g != %g", view->VIEWTWIST, VIEWTWIST);
+    view->VIEWTWIST--;
+  }
+  {
     BITCODE_CMC ambient_color;
     if (dwg_dynapi_entity_value (view, "VIEW", "ambient_color", &ambient_color, NULL)
         && !memcmp (&ambient_color, &view->ambient_color, sizeof (BITCODE_CMC)))
@@ -60119,21 +60179,6 @@ static int test_VIEW (const Dwg_Object *obj)
     else
       fail ("VIEW.associated_ucs [B] set+1 " FORMAT_B " != " FORMAT_B "", view->associated_ucs, associated_ucs);
     view->associated_ucs--;
-  }
-  {
-    BITCODE_BD back_clip_z;
-    if (dwg_dynapi_entity_value (view, "VIEW", "back_clip_z", &back_clip_z, NULL)
-        && back_clip_z == view->back_clip_z)
-      pass ();
-    else
-      fail ("VIEW.back_clip_z [BD] %g != %g", view->back_clip_z, back_clip_z);
-    back_clip_z++;
-    if (dwg_dynapi_entity_set_value (view, "VIEW", "back_clip_z", &back_clip_z, 0)
-        && back_clip_z == view->back_clip_z)
-      pass ();
-    else
-      fail ("VIEW.back_clip_z [BD] set+1 %g != %g", view->back_clip_z, back_clip_z);
-    view->back_clip_z--;
   }
   {
     BITCODE_H background;
@@ -60227,21 +60272,6 @@ static int test_VIEW (const Dwg_Object *obj)
     view->flag_3d--;
   }
   {
-    BITCODE_BD front_clip_z;
-    if (dwg_dynapi_entity_value (view, "VIEW", "front_clip_z", &front_clip_z, NULL)
-        && front_clip_z == view->front_clip_z)
-      pass ();
-    else
-      fail ("VIEW.front_clip_z [BD] %g != %g", view->front_clip_z, front_clip_z);
-    front_clip_z++;
-    if (dwg_dynapi_entity_set_value (view, "VIEW", "front_clip_z", &front_clip_z, 0)
-        && front_clip_z == view->front_clip_z)
-      pass ();
-    else
-      fail ("VIEW.front_clip_z [BD] set+1 %g != %g", view->front_clip_z, front_clip_z);
-    view->front_clip_z--;
-  }
-  {
     BITCODE_B is_camera_plottable;
     if (dwg_dynapi_entity_value (view, "VIEW", "is_camera_plottable", &is_camera_plottable, NULL)
         && is_camera_plottable == view->is_camera_plottable)
@@ -60317,21 +60347,6 @@ static int test_VIEW (const Dwg_Object *obj)
     view->is_xref_resolved--;
   }
   {
-    BITCODE_BD lens_length;
-    if (dwg_dynapi_entity_value (view, "VIEW", "lens_length", &lens_length, NULL)
-        && lens_length == view->lens_length)
-      pass ();
-    else
-      fail ("VIEW.lens_length [BD] %g != %g", view->lens_length, lens_length);
-    lens_length++;
-    if (dwg_dynapi_entity_set_value (view, "VIEW", "lens_length", &lens_length, 0)
-        && lens_length == view->lens_length)
-      pass ();
-    else
-      fail ("VIEW.lens_length [BD] set+1 %g != %g", view->lens_length, lens_length);
-    view->lens_length--;
-  }
-  {
     BITCODE_H livesection;
     if (dwg_dynapi_entity_value (view, "VIEW", "livesection", &livesection, NULL)
         && !memcmp (&livesection, &view->livesection, sizeof (BITCODE_H)))
@@ -60387,21 +60402,6 @@ static int test_VIEW (const Dwg_Object *obj)
         pass ();
     else
         fail ("VIEW.sun [H]");
-  }
-  {
-    BITCODE_BD twist_angle;
-    if (dwg_dynapi_entity_value (view, "VIEW", "twist_angle", &twist_angle, NULL)
-        && twist_angle == view->twist_angle)
-      pass ();
-    else
-      fail ("VIEW.twist_angle [BD] %g != %g", view->twist_angle, twist_angle);
-    twist_angle++;
-    if (dwg_dynapi_entity_set_value (view, "VIEW", "twist_angle", &twist_angle, 0)
-        && twist_angle == view->twist_angle)
-      pass ();
-    else
-      fail ("VIEW.twist_angle [BD] set+1 %g != %g", view->twist_angle, twist_angle);
-    view->twist_angle--;
   }
   {
     BITCODE_BD ucs_elevation;
@@ -62460,6 +62460,21 @@ static int test_VPORT (const Dwg_Object *obj)
       return 1;
     }
   {
+    BITCODE_BD BACKZ;
+    if (dwg_dynapi_entity_value (vport, "VPORT", "BACKZ", &BACKZ, NULL)
+        && BACKZ == vport->BACKZ)
+      pass ();
+    else
+      fail ("VPORT.BACKZ [BD] %g != %g", vport->BACKZ, BACKZ);
+    BACKZ++;
+    if (dwg_dynapi_entity_set_value (vport, "VPORT", "BACKZ", &BACKZ, 0)
+        && BACKZ == vport->BACKZ)
+      pass ();
+    else
+      fail ("VPORT.BACKZ [BD] set+1 %g != %g", vport->BACKZ, BACKZ);
+    vport->BACKZ--;
+  }
+  {
     BITCODE_B FASTZOOM;
     if (dwg_dynapi_entity_value (vport, "VPORT", "FASTZOOM", &FASTZOOM, NULL)
         && FASTZOOM == vport->FASTZOOM)
@@ -62473,6 +62488,21 @@ static int test_VPORT (const Dwg_Object *obj)
     else
       fail ("VPORT.FASTZOOM [B] set+1 " FORMAT_B " != " FORMAT_B "", vport->FASTZOOM, FASTZOOM);
     vport->FASTZOOM--;
+  }
+  {
+    BITCODE_BD FRONTZ;
+    if (dwg_dynapi_entity_value (vport, "VPORT", "FRONTZ", &FRONTZ, NULL)
+        && FRONTZ == vport->FRONTZ)
+      pass ();
+    else
+      fail ("VPORT.FRONTZ [BD] %g != %g", vport->FRONTZ, FRONTZ);
+    FRONTZ++;
+    if (dwg_dynapi_entity_set_value (vport, "VPORT", "FRONTZ", &FRONTZ, 0)
+        && FRONTZ == vport->FRONTZ)
+      pass ();
+    else
+      fail ("VPORT.FRONTZ [BD] set+1 %g != %g", vport->FRONTZ, FRONTZ);
+    vport->FRONTZ--;
   }
   {
     BITCODE_B GRIDMODE;
@@ -62496,6 +62526,21 @@ static int test_VPORT (const Dwg_Object *obj)
         pass ();
     else
         fail ("VPORT.GRIDUNIT [2RD]");
+  }
+  {
+    BITCODE_BD LENSLENGTH;
+    if (dwg_dynapi_entity_value (vport, "VPORT", "LENSLENGTH", &LENSLENGTH, NULL)
+        && LENSLENGTH == vport->LENSLENGTH)
+      pass ();
+    else
+      fail ("VPORT.LENSLENGTH [BD] %g != %g", vport->LENSLENGTH, LENSLENGTH);
+    LENSLENGTH++;
+    if (dwg_dynapi_entity_set_value (vport, "VPORT", "LENSLENGTH", &LENSLENGTH, 0)
+        && LENSLENGTH == vport->LENSLENGTH)
+      pass ();
+    else
+      fail ("VPORT.LENSLENGTH [BD] set+1 %g != %g", vport->LENSLENGTH, LENSLENGTH);
+    vport->LENSLENGTH--;
   }
   {
     BITCODE_BD SNAPANG;
@@ -62679,6 +62724,21 @@ static int test_VPORT (const Dwg_Object *obj)
     vport->VIEWSIZE--;
   }
   {
+    BITCODE_BD VIEWTWIST;
+    if (dwg_dynapi_entity_value (vport, "VPORT", "VIEWTWIST", &VIEWTWIST, NULL)
+        && VIEWTWIST == vport->VIEWTWIST)
+      pass ();
+    else
+      fail ("VPORT.VIEWTWIST [BD] %g != %g", vport->VIEWTWIST, VIEWTWIST);
+    VIEWTWIST++;
+    if (dwg_dynapi_entity_set_value (vport, "VPORT", "VIEWTWIST", &VIEWTWIST, 0)
+        && VIEWTWIST == vport->VIEWTWIST)
+      pass ();
+    else
+      fail ("VPORT.VIEWTWIST [BD] set+1 %g != %g", vport->VIEWTWIST, VIEWTWIST);
+    vport->VIEWTWIST--;
+  }
+  {
     BITCODE_CMC ambient_color;
     if (dwg_dynapi_entity_value (vport, "VPORT", "ambient_color", &ambient_color, NULL)
         && !memcmp (&ambient_color, &vport->ambient_color, sizeof (BITCODE_CMC)))
@@ -62700,21 +62760,6 @@ static int test_VPORT (const Dwg_Object *obj)
     else
       fail ("VPORT.aspect_ratio [BD] set+1 %g != %g", vport->aspect_ratio, aspect_ratio);
     vport->aspect_ratio--;
-  }
-  {
-    BITCODE_BD back_clip_z;
-    if (dwg_dynapi_entity_value (vport, "VPORT", "back_clip_z", &back_clip_z, NULL)
-        && back_clip_z == vport->back_clip_z)
-      pass ();
-    else
-      fail ("VPORT.back_clip_z [BD] %g != %g", vport->back_clip_z, back_clip_z);
-    back_clip_z++;
-    if (dwg_dynapi_entity_set_value (vport, "VPORT", "back_clip_z", &back_clip_z, 0)
-        && back_clip_z == vport->back_clip_z)
-      pass ();
-    else
-      fail ("VPORT.back_clip_z [BD] set+1 %g != %g", vport->back_clip_z, back_clip_z);
-    vport->back_clip_z--;
   }
   {
     BITCODE_H background;
@@ -62808,21 +62853,6 @@ static int test_VPORT (const Dwg_Object *obj)
     vport->flag--;
   }
   {
-    BITCODE_BD front_clip_z;
-    if (dwg_dynapi_entity_value (vport, "VPORT", "front_clip_z", &front_clip_z, NULL)
-        && front_clip_z == vport->front_clip_z)
-      pass ();
-    else
-      fail ("VPORT.front_clip_z [BD] %g != %g", vport->front_clip_z, front_clip_z);
-    front_clip_z++;
-    if (dwg_dynapi_entity_set_value (vport, "VPORT", "front_clip_z", &front_clip_z, 0)
-        && front_clip_z == vport->front_clip_z)
-      pass ();
-    else
-      fail ("VPORT.front_clip_z [BD] set+1 %g != %g", vport->front_clip_z, front_clip_z);
-    vport->front_clip_z--;
-  }
-  {
     BITCODE_BS grid_flags;
     if (dwg_dynapi_entity_value (vport, "VPORT", "grid_flags", &grid_flags, NULL)
         && grid_flags == vport->grid_flags)
@@ -62896,21 +62926,6 @@ static int test_VPORT (const Dwg_Object *obj)
     else
       fail ("VPORT.is_xref_resolved [BS] set+1 %hu != %hu", vport->is_xref_resolved, is_xref_resolved);
     vport->is_xref_resolved--;
-  }
-  {
-    BITCODE_BD lens_length;
-    if (dwg_dynapi_entity_value (vport, "VPORT", "lens_length", &lens_length, NULL)
-        && lens_length == vport->lens_length)
-      pass ();
-    else
-      fail ("VPORT.lens_length [BD] %g != %g", vport->lens_length, lens_length);
-    lens_length++;
-    if (dwg_dynapi_entity_set_value (vport, "VPORT", "lens_length", &lens_length, 0)
-        && lens_length == vport->lens_length)
-      pass ();
-    else
-      fail ("VPORT.lens_length [BD] set+1 %g != %g", vport->lens_length, lens_length);
-    vport->lens_length--;
   }
   {
     BITCODE_2RD lower_left;
@@ -63068,21 +63083,6 @@ static int test_VPORT (const Dwg_Object *obj)
         pass ();
     else
         fail ("VPORT.view_target [3BD]");
-  }
-  {
-    BITCODE_BD view_twist;
-    if (dwg_dynapi_entity_value (vport, "VPORT", "view_twist", &view_twist, NULL)
-        && view_twist == vport->view_twist)
-      pass ();
-    else
-      fail ("VPORT.view_twist [BD] %g != %g", vport->view_twist, view_twist);
-    view_twist++;
-    if (dwg_dynapi_entity_set_value (vport, "VPORT", "view_twist", &view_twist, 0)
-        && view_twist == vport->view_twist)
-      pass ();
-    else
-      fail ("VPORT.view_twist [BD] set+1 %g != %g", vport->view_twist, view_twist);
-    vport->view_twist--;
   }
   {
     BITCODE_BD view_width;

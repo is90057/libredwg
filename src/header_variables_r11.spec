@@ -186,7 +186,7 @@
   FIELD_RD (DIMRND, 40);
   FIELD_RD (DIMDLE, 40);
   FIELD_TFv (DIMBLK_T, 33, 1);
-  FIELD_RS (circle_zoom_percent, 0);
+  FIELD_RS (circle_zoom, 0);
   FIELD_RS (COORDS, 0);
 #ifdef IS_JSON
   FIELD_CMC (CECOLOR, 62);

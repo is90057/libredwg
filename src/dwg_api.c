@@ -15757,16 +15757,16 @@ dwg_ent_viewport_get_VIEWDIR (const dwg_ent_viewport *restrict vp,
     }
 }
 
-/** Sets VIEWPORT.twist_angle
+/** Sets VIEWPORT.VIEWTWIST twist angle in radians
  */
 EXPORT void
-dwg_ent_viewport_set_twist_angle (dwg_ent_viewport *restrict vp,
-                                  const double angle, int *restrict error)
+dwg_ent_viewport_set_VIEWTWIST (dwg_ent_viewport *restrict vp,
+                                const double angle, int *restrict error)
 {
   if (vp)
     {
       *error = 0;
-      vp->twist_angle = angle;
+      vp->VIEWTWIST = angle;
     }
   else
     {
@@ -15775,16 +15775,16 @@ dwg_ent_viewport_set_twist_angle (dwg_ent_viewport *restrict vp,
     }
 }
 
-/** Returns VIEWPORT.twist_angle
+/** Returns VIEWPORT.VIEWTWIST twist angle in radians
  */
 EXPORT double
-dwg_ent_viewport_get_twist_angle (const dwg_ent_viewport *restrict vp,
+dwg_ent_viewport_get_VIEWTWIST (const dwg_ent_viewport *restrict vp,
                                   int *restrict error)
 {
   if (vp)
     {
       *error = 0;
-      return vp->twist_angle;
+      return vp->VIEWTWIST;
     }
   else
     {
@@ -15831,16 +15831,16 @@ dwg_ent_viewport_get_VIEWSIZE (const dwg_ent_viewport *restrict vp,
     }
 }
 
-/** Sets viewport lens length
+/** Sets VIEWPORT.LENSLENGTH
  */
 EXPORT void
-dwg_ent_viewport_set_lens_length (dwg_ent_viewport *restrict vp,
-                                  const double length, int *restrict error)
+dwg_ent_viewport_set_LENSLENGTH (dwg_ent_viewport *restrict vp,
+                                  const double lenslength, int *restrict error)
 {
   if (vp)
     {
       *error = 0;
-      vp->lens_length = length;
+      vp->LENSLENGTH = lenslength;
     }
   else
     {
@@ -15849,16 +15849,16 @@ dwg_ent_viewport_set_lens_length (dwg_ent_viewport *restrict vp,
     }
 }
 
-/** Returns lens length
+/** Returns VIEWPORT.LENSLENGTH
  */
 EXPORT double
-dwg_ent_viewport_get_lens_length (const dwg_ent_viewport *restrict vp,
-                                  int *restrict error)
+dwg_ent_viewport_get_LENSLENGTH (const dwg_ent_viewport *restrict vp,
+                                 int *restrict error)
 {
   if (vp)
     {
       *error = 0;
-      return vp->lens_length;
+      return vp->LENSLENGTH;
     }
   else
     {
@@ -15871,13 +15871,13 @@ dwg_ent_viewport_get_lens_length (const dwg_ent_viewport *restrict vp,
 /** Sets viewport front clip z value
  */
 EXPORT void
-dwg_ent_viewport_set_front_clip_z (dwg_ent_viewport *restrict vp,
-                                   const double front_z, int *restrict error)
+dwg_ent_viewport_set_FRONTZ (dwg_ent_viewport *restrict vp,
+                             const double front_z, int *restrict error)
 {
   if (vp)
     {
       *error = 0;
-      vp->front_clip_z = front_z;
+      vp->FRONTZ = front_z;
     }
   else
     {
@@ -15889,13 +15889,13 @@ dwg_ent_viewport_set_front_clip_z (dwg_ent_viewport *restrict vp,
 /** Returns viewport front clip z value
  */
 EXPORT double
-dwg_ent_viewport_get_front_clip_z (const dwg_ent_viewport *restrict vp,
-                                   int *restrict error)
+dwg_ent_viewport_get_FRONTZ (const dwg_ent_viewport *restrict vp,
+                             int *restrict error)
 {
   if (vp)
     {
       *error = 0;
-      return vp->front_clip_z;
+      return vp->FRONTZ;
     }
   else
     {
@@ -15908,13 +15908,13 @@ dwg_ent_viewport_get_front_clip_z (const dwg_ent_viewport *restrict vp,
 /** Sets viewport back clip z value
  */
 EXPORT void
-dwg_ent_viewport_set_back_clip_z (dwg_ent_viewport *restrict vp,
-                                  const double back_z, int *restrict error)
+dwg_ent_viewport_set_BACKZ (dwg_ent_viewport *restrict vp,
+                            const double back_z, int *restrict error)
 {
   if (vp)
     {
       *error = 0;
-      vp->back_clip_z = back_z;
+      vp->BACKZ = back_z;
     }
   else
     {
@@ -15926,13 +15926,13 @@ dwg_ent_viewport_set_back_clip_z (dwg_ent_viewport *restrict vp,
 /** Returns viewport back clip z value
  */
 EXPORT double
-dwg_ent_viewport_get_back_clip_z (const dwg_ent_viewport *restrict vp,
-                                  int *restrict error)
+dwg_ent_viewport_get_BACKZ (const dwg_ent_viewport *restrict vp,
+                            int *restrict error)
 {
   if (vp)
     {
       *error = 0;
-      return vp->back_clip_z;
+      return vp->BACKZ;
     }
   else
     {
@@ -25101,7 +25101,7 @@ dwg_add_Document (Dwg_Data *restrict dwg, const int imperial)
   // dwg->header_vars.DIMBLK1_T = dwg_add_u8_input (dwg, "");
   // dwg->header_vars.DIMBLK2_T = dwg_add_u8_input (dwg, "");
   if (version > R_2_21 && version < R_13b1)
-    dwg->header_vars.circle_zoom_percent = 100;
+    dwg->header_vars.circle_zoom = 100;
 
   dwg->header_vars.DIMCLRD = (BITCODE_CMC){ 0, CMC_DEFAULTS };
   dwg->header_vars.DIMCLRE = (BITCODE_CMC){ 0, CMC_DEFAULTS };
@@ -27164,7 +27164,7 @@ dwg_add_VIEWPORT (Dwg_Object_BLOCK_HEADER *restrict blkhdr,
       _obj->vport_entity_header = dwg_add_handleref (dwg, 5, vxobj ? vxobj->handle.value : 0, NULL);
     }
   // TODO get defaults from name
-  _obj->lens_length = 50.0;
+  _obj->LENSLENGTH = 50.0;
   _obj->VIEWDIR.z = 1.0;
   _obj->center.x = _obj->VIEWCTR.x = 133.349991;
   _obj->center.y = _obj->VIEWCTR.y = 101.599997;
@@ -27983,7 +27983,7 @@ EXPORT Dwg_Object_VIEW *
 dwg_add_VIEW (Dwg_Data *restrict dwg, const char *restrict name)
 {
   API_ADD_TABLE (VIEW, VIEW_CONTROL, {
-    _obj->lens_length = 50.0;
+    _obj->LENSLENGTH = 50.0;
     _obj->VIEWDIR.z = 1.0;
     _obj->VIEWMODE = 1;
     _obj->VIEWSIZE = 13314.951254;
@@ -27999,7 +27999,7 @@ EXPORT Dwg_Object_VPORT *
 dwg_add_VPORT (Dwg_Data *restrict dwg, const char *restrict name)
 {
   API_ADD_TABLE (VPORT, VPORT_CONTROL, {
-    _obj->lens_length = 50.0;
+    _obj->LENSLENGTH = 50.0;
     _obj->VIEWDIR.z = 1.0;
     _obj->VIEWMODE = 1;
     _obj->VIEWSIZE = 13314.951254;
