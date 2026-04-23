@@ -1274,17 +1274,7 @@ decompress_R2004_section (Bit_Chain *restrict src, Bit_Chain *restrict dec)
       // decompression. ACadSharp decompresses all comp_bytes, enlarging the
       // buffer (but not using it)
       end = pos + comp_bytes;
-      if (end >= dec->size)
-        {
-          LOG_TRACE ("decompress oob: %" PRIuSIZE " >= %" PRIuSIZE "\n", end,
-                     dec->size);
-          // bit_chain_alloc_size (dec, pos + comp_bytes);
-          comp_bytes = (int)(dec->size - pos);
-          end = pos + comp_bytes;
-          opcode1 = 0x11;
-          LOG_INSANE (">O %x!\n", opcode1);
-        }
-      if (end > dec->size || (long)pos < comp_offset
+      if (end >= dec->size || (long)pos < comp_offset
           || (size_t)(pos - comp_offset) >= dec->size
           || (size_t)comp_offset > dec->size)
         {
