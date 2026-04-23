@@ -2010,8 +2010,16 @@ read_2004_compressed_section (Bit_Chain *dat, Dwg_Data *restrict dwg,
       // XXX: This Teigha bug is already fixed up before
       if (type == SECTION_TEMPLATE && is_teigha && info->size >= 4
           && info->unknown == 1)
-        // bug in Teigha with Template, with num_sections=0
-        info->num_sections = 1;
+        {
+          Dwg_Section *sec = calloc (1, sizeof (Dwg_Section));
+          // bug in Teigha with Template, with num_sections=0
+          info->num_sections = 1;
+          info->sections = realloc (info->sections, sizeof (Dwg_Section *));
+          if (!info->sections || !sec)
+            return DWG_ERR_OUTOFMEM;
+          else
+            info->sections[0] = sec;
+        }
       /*
       else if (type == SECTION_UNKNOWN)
         {
