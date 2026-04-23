@@ -2168,7 +2168,9 @@ read_2004_compressed_section (Bit_Chain *dat, Dwg_Data *restrict dwg,
               = MIN ((BITCODE_RL)(info->size - es.fields.address),
                      es.fields.page_size);
           if (info->compressed == 2 || bytes_left < 0
+              || es.fields.address > max_decomp_size
               || es.fields.address + size > max_decomp_size
+              || es.fields.address + size > dec.size
               || offset + size > dat->size)
             {
               LOG_ERROR ("Some section size or address out of bounds");
