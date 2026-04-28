@@ -1274,13 +1274,15 @@ decompress_R2004_section (Bit_Chain *restrict src, Bit_Chain *restrict dec)
       // decompression. ACadSharp decompresses all comp_bytes, enlarging the
       // buffer (but not using it)
       end = pos + comp_bytes;
-      if (end >= dec->size || (long)pos < comp_offset
-          || (size_t)(pos - comp_offset) >= dec->size
-          || (size_t)comp_offset > dec->size)
+      if (end >= dec->size)
         {
-          LOG_ERROR ("Invalid decompression bytes %d, offset %d", comp_bytes,
-                     comp_offset);
-          return DWG_ERR_VALUEOUTOFBOUNDS;
+          LOG_TRACE ("decompress oob: %" PRIuSIZE " >= %" PRIuSIZE "\n", end,
+                     dec->size);
+          // bit_chain_alloc_size (dec, pos + comp_bytes);
+          comp_bytes = (int)(dec->size - pos);
+          end = pos + comp_bytes;
+          opcode1 = 0x11;
+          LOG_INSANE (">O %x!\n", opcode1);
         }
       // GH #1204: memmove is wrong here: when comp_offset < comp_bytes the
       // source and destination overlap and newly-written bytes must be read
@@ -2000,16 +2002,8 @@ read_2004_compressed_section (Bit_Chain *dat, Dwg_Data *restrict dwg,
       // XXX: This Teigha bug is already fixed up before
       if (type == SECTION_TEMPLATE && is_teigha && info->size >= 4
           && info->unknown == 1)
-        {
-          Dwg_Section *sec = calloc (1, sizeof (Dwg_Section));
-          // bug in Teigha with Template, with num_sections=0
-          info->num_sections = 1;
-          info->sections = realloc (info->sections, sizeof (Dwg_Section *));
-          if (!info->sections || !sec)
-            return DWG_ERR_OUTOFMEM;
-          else
-            info->sections[0] = sec;
-        }
+        // bug in Teigha with Template, with num_sections=0
+        info->num_sections = 1;
       /*
       else if (type == SECTION_UNKNOWN)
         {
@@ -2174,9 +2168,7 @@ read_2004_compressed_section (Bit_Chain *dat, Dwg_Data *restrict dwg,
               = MIN ((BITCODE_RL)(info->size - es.fields.address),
                      es.fields.page_size);
           if (info->compressed == 2 || bytes_left < 0
-              || es.fields.address > max_decomp_size
               || es.fields.address + size > max_decomp_size
-              || es.fields.address + size > dec.size
               || offset + size > dat->size)
             {
               LOG_ERROR ("Some section size or address out of bounds");

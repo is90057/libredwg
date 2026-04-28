@@ -7608,28 +7608,28 @@ extern "C"
                                  int *restrict error)
       __nonnull ((2)) _deprecated_dynapi_getter;
 
-  EXPORT void dwg_ent_viewport_set_LENSLENGTH (dwg_ent_viewport *restrict vp,
-                                               const double length,
-                                               int *restrict error)
+  EXPORT void dwg_ent_viewport_set_lens_length (dwg_ent_viewport *restrict vp,
+                                                const double length,
+                                                int *restrict error)
       __nonnull ((3)) _deprecated_dynapi_setter;
 
   EXPORT double
-  dwg_ent_viewport_get_LENSLENGTH (const dwg_ent_viewport *restrict vp,
-                                   int *restrict error)
+  dwg_ent_viewport_get_lens_length (const dwg_ent_viewport *restrict vp,
+                                    int *restrict error)
       __nonnull ((2)) _deprecated_dynapi_getter;
 
-  EXPORT void dwg_ent_viewport_set_FRONTZ (dwg_ent_viewport *restrict vp,
-                                           const double front_z,
-                                           int *restrict error)
+  EXPORT void dwg_ent_viewport_set_front_clip_z (dwg_ent_viewport *restrict vp,
+                                                 const double front_z,
+                                                 int *restrict error)
       __nonnull ((3)) _deprecated_dynapi_setter;
   EXPORT double
-  dwg_ent_viewport_get_FRONTZ (const dwg_ent_viewport *restrict vp,
-                               int *restrict error)
+  dwg_ent_viewport_get_front_clip_z (const dwg_ent_viewport *restrict vp,
+                                     int *restrict error)
       __nonnull ((2)) _deprecated_dynapi_getter;
 
-  EXPORT void dwg_ent_viewport_set_BACKZ (dwg_ent_viewport *restrict vp,
-                                          const double back_z,
-                                          int *restrict error)
+  EXPORT void dwg_ent_viewport_set_back_clip_z (dwg_ent_viewport *restrict vp,
+                                                const double back_z,
+                                                int *restrict error)
       __nonnull ((3)) _deprecated_dynapi_setter;
   EXPORT double
   dwg_ent_viewport_get_back_clip_z (const dwg_ent_viewport *restrict vp,

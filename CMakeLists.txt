@@ -8,6 +8,9 @@ project(libredwg C)
 #                   -DDXF_PRECISION=6
 #                   -DGEOMJSON_PRECISION=6
 # for smaller builds and lib.
+if(APPLE)
+  list(APPEND CMAKE_PREFIX_PATH "/opt/homebrew" "/usr/local")
+endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(MSVC)

@@ -13040,7 +13040,6 @@ dxf_tables_read (Bit_Chain *restrict dat, Dwg_Data *restrict dwg)
 {
   char table[80];
   Dxf_Pair *pair;
-  Dwg_Object *obj = NULL;
 
   pair = dxf_read_pair (dat);
   table[0] = '\0'; // init
@@ -13085,6 +13084,7 @@ dxf_tables_read (Bit_Chain *restrict dat, Dwg_Data *restrict dwg)
           while (pair && pair->code == 0 && pair->value.s.ptr
                  && strEQ (pair->value.s.ptr, table))
             {
+              Dwg_Object *obj;
               Dwg_Object *ctrl;
               char *dxfname = strdup (pair->value.s.ptr);
               BITCODE_BL idx = dwg->num_objects;
@@ -13222,37 +13222,6 @@ dxf_tables_read (Bit_Chain *restrict dat, Dwg_Data *restrict dwg)
                             goto outofmem;
                           }
                       }
-                  }
-                else if (dat->version <= R_12 && strEQc (table, "VPORT") && obj
-                         && obj->tio.object && obj->tio.object->tio.VPORT
-                         && strEQc (obj->tio.object->tio.VPORT->name,
-                                    "*ACTIVE")
-                         && !(obj->tio.object->tio.VPORT->flag & 128))
-                  {
-#  define SET_HDR(f)  dwg->header_vars.f = _obj->f
-#  define SET_HDR_2PT(f)  dwg->header_vars.f.x = _obj->f.x; dwg->header_vars.f.y = _obj->f.y
-                    Dwg_Object_VPORT *_obj = obj->tio.object->tio.VPORT;
-                    SET_HDR (VIEWMODE);
-                    SET_HDR (VIEWSIZE);
-                    SET_HDR_2PT (VIEWDIR);
-                    SET_HDR_2PT (VIEWCTR);
-                    SET_HDR (aspect_ratio);
-                    SET_HDR (circle_zoom);
-                    SET_HDR (FRONTZ);
-                    SET_HDR (BACKZ);
-                    SET_HDR (LENSLENGTH);
-                    SET_HDR (FASTZOOM);
-                    SET_HDR (SNAPMODE);
-                    SET_HDR (GRIDMODE);
-                    SET_HDR (UCSICON);
-                    SET_HDR (SNAPSTYLE);
-                    SET_HDR (SNAPISOPAIR);
-                    SET_HDR (SNAPANG);
-                    SET_HDR_2PT (SNAPBASE);
-                    SET_HDR_2PT (SNAPUNIT);
-                    SET_HDR_2PT (GRIDUNIT);
-#  undef SET_HDR
-#  undef SET_HDR_2PT
                   }
                 else
                   {

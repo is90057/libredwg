@@ -13,6 +13,7 @@ AC_INIT([LibreDWG],
         [m4_esyscmd(build-aux/git-version-gen .tarball-version)],
         [libredwg@gnu.org],[],
         [https://savannah.gnu.org/projects/libredwg/])
+AC_USE_SYSTEM_EXTENSIONS
 AC_CONFIG_AUX_DIR([build-aux])
 dnl for older systems use this:
 dnl AM_INIT_AUTOMAKE([1.11.6 gnu no-define])
@@ -222,9 +223,6 @@ if test x$ac_cv_header_wchar_h = xyes; then
 fi
 dnl AX_GCC_BUILTIN(__builtin_offsetof)
 case "$host_os" in
-darwin*|macos*)
-    AC_DEFINE([_POSIX_C_SOURCE],[900000L],[Needed for all APPLE extensions])
-    ;;
 *)
     AH_VERBATIM([_POSIX_C_SOURCE],
 [/* Needed for strdup */

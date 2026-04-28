@@ -2111,7 +2111,7 @@ typedef struct _dwg_header_variables {
   BITCODE_BS unknown_57;
   BITCODE_RL dwg_size;     /* -r1.40 */
   BITCODE_RS numentities;  /* r2.0 - r10 */
-  BITCODE_RS circle_zoom;  /* in percent, 0-100 */
+  BITCODE_RS circle_zoom_percent;
   BITCODE_BD FRONTZ;
   BITCODE_BD BACKZ;
   BITCODE_RC UCSICON;
@@ -2814,11 +2814,11 @@ typedef struct _dwg_entity_VIEWPORT
 
   BITCODE_3BD view_target;
   BITCODE_3BD VIEWDIR;
-  BITCODE_BD VIEWTWIST;
+  BITCODE_BD twist_angle;
   BITCODE_BD VIEWSIZE; // the height
-  BITCODE_BD LENSLENGTH;
-  BITCODE_BD FRONTZ;
-  BITCODE_BD BACKZ;
+  BITCODE_BD lens_length;
+  BITCODE_BD front_clip_z;
+  BITCODE_BD back_clip_z;
   BITCODE_BD SNAPANG;
   BITCODE_2RD VIEWCTR;
   BITCODE_2RD SNAPBASE;
@@ -3467,10 +3467,10 @@ typedef struct _dwg_object_VIEW
   BITCODE_2RD VIEWCTR;
   BITCODE_3BD view_target;
   BITCODE_3BD VIEWDIR;
-  BITCODE_BD VIEWTWIST;
-  BITCODE_BD LENSLENGTH;
-  BITCODE_BD FRONTZ;
-  BITCODE_BD BACKZ;
+  BITCODE_BD twist_angle;
+  BITCODE_BD lens_length;
+  BITCODE_BD front_clip_z;
+  BITCODE_BD back_clip_z;
   BITCODE_4BITS VIEWMODE; // DXF 71. 0: perspective, 1: front_clip_on, 2: back_clip_on, 3: front_clip_at_eye_on
   BITCODE_RC render_mode;
   BITCODE_B use_default_lights;
@@ -3552,10 +3552,10 @@ typedef struct _dwg_object_VPORT
   BITCODE_2RD VIEWCTR;
   BITCODE_3BD view_target;
   BITCODE_3BD VIEWDIR;
-  BITCODE_BD VIEWTWIST;
-  BITCODE_BD LENSLENGTH;
-  BITCODE_BD FRONTZ;
-  BITCODE_BD BACKZ;
+  BITCODE_BD view_twist;
+  BITCODE_BD lens_length;
+  BITCODE_BD front_clip_z;
+  BITCODE_BD back_clip_z;
   BITCODE_4BITS VIEWMODE;
   BITCODE_RC render_mode;
   BITCODE_B use_default_lights;

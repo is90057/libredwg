@@ -699,7 +699,7 @@ RD
 RL
 @item bitsize_hi
 RL
-@item circle_zoom
+@item circle_zoom_percent
 RS
 @item codepage
 RS
@@ -4769,15 +4769,15 @@ RS,	DXF 69
 3BD,	DXF 17
 @item VIEWDIR
 3BD,	DXF 16
-@item VIEWTWIST
+@item twist_angle
 BD,	DXF 51
 @item VIEWSIZE
 BD,	DXF 45
-@item LENSLENGTH
+@item lens_length
 BD,	DXF 42
-@item FRONTZ
+@item front_clip_z
 BD,	DXF 43
-@item BACKZ
+@item back_clip_z
 BD,	DXF 44
 @item SNAPANG
 BD,	DXF 50
@@ -12236,13 +12236,13 @@ BD
 3BD,	DXF 12
 @item VIEWDIR
 3BD,	DXF 11
-@item VIEWTWIST
+@item twist_angle
 BD,	DXF 50
-@item LENSLENGTH
+@item lens_length
 BD,	DXF 42
-@item FRONTZ
+@item front_clip_z
 BD,	DXF 43
-@item BACKZ
+@item back_clip_z
 BD,	DXF 44
 @item VIEWMODE
 4BITS,	DXF 71
@@ -12621,13 +12621,13 @@ BD,	DXF 41
 3BD,	DXF 17
 @item VIEWDIR
 3BD,	DXF 16
-@item VIEWTWIST
+@item view_twist
 BD,	DXF 51
-@item LENSLENGTH
+@item lens_length
 BD,	DXF 42
-@item FRONTZ
+@item front_clip_z
 BD,	DXF 43
-@item BACKZ
+@item back_clip_z
 BD,	DXF 44
 @item VIEWMODE
 4BITS,	DXF 71

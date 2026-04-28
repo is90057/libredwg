@@ -2436,21 +2436,21 @@ DWG_ENTITY (VIEWPORT)
       FIELD_2RD (GRIDUNIT, 15);
       FIELD_3BD (VIEWDIR, 16);
       FIELD_3BD (view_target, 17);
-      FIELD_BD (LENSLENGTH, 42);
-      FIELD_BD (FRONTZ, 43);
-      FIELD_BD (BACKZ, 44);
+      FIELD_BD (lens_length, 42);
+      FIELD_BD (front_clip_z, 43);
+      FIELD_BD (back_clip_z, 44);
       FIELD_BD (VIEWSIZE, 45);
       FIELD_BD (SNAPANG, 50);
-      FIELD_BD (VIEWTWIST, 51);
+      FIELD_BD (twist_angle, 51);
       FIELD_BS (circle_zoom, 72);
     } else {
       FIELD_3BD (view_target, 17);
       FIELD_3BD (VIEWDIR, 16);
-      FIELD_BD (VIEWTWIST, 51);
+      FIELD_BD (twist_angle, 51);
       FIELD_BD (VIEWSIZE, 45);
-      FIELD_BD (LENSLENGTH, 42);
-      FIELD_BD (FRONTZ, 43);
-      FIELD_BD (BACKZ, 44);
+      FIELD_BD (lens_length, 42);
+      FIELD_BD (front_clip_z, 43);
+      FIELD_BD (back_clip_z, 44);
       if (dwg->header.dwg_version != 0x1a) { // AC1020/R_2006 only here
         FIELD_BD (SNAPANG, 50);
         FIELD_2RD (VIEWCTR, 12);
@@ -4185,10 +4185,10 @@ DWG_TABLE (VIEW)
     SINCE (R_10) {
       FIELD_3RD (view_target, 12);
       FIELD_CAST (VIEWMODE, RS, 4BITS, 0);
-      FIELD_RD (LENSLENGTH, 42); // defaults to 50.0
-      FIELD_RD (FRONTZ, 43);
-      FIELD_RD (BACKZ, 44);
-      FIELD_RD (VIEWTWIST, 50);
+      FIELD_RD (lens_length, 42); // defaults to 50.0
+      FIELD_RD (front_clip_z, 43);
+      FIELD_RD (back_clip_z, 44);
+      FIELD_RD (twist_angle, 50);
       DXF {
         FIELD_CAST (VIEWMODE, RS, 4BITS, 71);
       }
@@ -4215,10 +4215,10 @@ DWG_TABLE (VIEW)
     }
     FIELD_3BD (view_target, 12);
     FIELD_3BD (VIEWDIR, 0);
-    FIELD_BD (VIEWTWIST, 50);
-    FIELD_BD (LENSLENGTH, 42);
-    FIELD_BD (FRONTZ, 43);
-    FIELD_BD (BACKZ, 44);
+    FIELD_BD (twist_angle, 50);
+    FIELD_BD (lens_length, 42);
+    FIELD_BD (front_clip_z, 43);
+    FIELD_BD (back_clip_z, 44);
     FIELD_4BITS (VIEWMODE, 71);
   }
   SINCE (R_2000b) {
@@ -4375,11 +4375,11 @@ DWG_TABLE (VPORT)
     FIELD_3RD (view_target, 17);
     FIELD_RD (VIEWSIZE, 40);
     FIELD_RD (aspect_ratio, 41); // = view_width / VIEWSIZE
-    FIELD_RD (LENSLENGTH, 42);
-    FIELD_RD (FRONTZ, 43);
-    FIELD_RD (BACKZ, 44);
+    FIELD_RD (lens_length, 42);
+    FIELD_RD (front_clip_z, 43);
+    FIELD_RD (back_clip_z, 44);
     FIELD_RD (SNAPANG, 50);
-    FIELD_RD (VIEWTWIST, 51);
+    FIELD_RD (view_twist, 51);
     FIELD_RS (UCSFOLLOW, 71);
     // FIELD_VALUE (VIEWMODE) |= (FIELD_VALUE (UCSFOLLOW) << 2);
     //VIEWMODE: UCSVP bit 0, ucs_at_origin bit 1, UCSFOLLOW bit 3
@@ -4436,7 +4436,7 @@ DWG_TABLE (VPORT)
       FIELD_2RD (upper_right, 11);
       FIELD_3RD (view_target, 17);
       FIELD_3RD (VIEWDIR, 16);
-      FIELD_RD (VIEWTWIST, 51);
+      FIELD_RD (view_twist, 51);
       FIELD_RD (VIEWSIZE, 40);
       FIELD_2RD (VIEWCTR, 12);
       FIELD_RD (aspect_ratio, 41);
@@ -4444,9 +4444,9 @@ DWG_TABLE (VPORT)
         FIELD_VALUE (view_width) = FIELD_VALUE (aspect_ratio) * FIELD_VALUE (VIEWSIZE);
         LOG_TRACE ("view_width: %f (calc)\n", FIELD_VALUE (view_width));
       }
-      FIELD_RD (LENSLENGTH, 42);
-      FIELD_RD (FRONTZ, 43);
-      FIELD_RD (BACKZ, 44);
+      FIELD_RD (lens_length, 42);
+      FIELD_RD (front_clip_z, 43);
+      FIELD_RD (back_clip_z, 44);
       FIELD_RS (UCSFOLLOW, 71);
       FIELD_RS (circle_zoom, 72); //circle sides
       FIELD_RS (FASTZOOM, 73);
@@ -4477,10 +4477,10 @@ DWG_TABLE (VPORT)
       FIELD_2RD (VIEWCTR, 12);
       FIELD_3BD (view_target, 17);
       FIELD_3BD (VIEWDIR, 16);
-      FIELD_BD (VIEWTWIST, 51);
-      FIELD_BD (LENSLENGTH, 42);
-      FIELD_BD (FRONTZ, 43);
-      FIELD_BD (BACKZ, 44);
+      FIELD_BD (view_twist, 51);
+      FIELD_BD (lens_length, 42);
+      FIELD_BD (front_clip_z, 43);
+      FIELD_BD (back_clip_z, 44);
       // UCSFOLLOW is bit 3 of 71, UCSVP bit 0, ucs_at_origin bit 1. below decoded again.
       FIELD_4BITS (VIEWMODE, 71);
       SINCE (R_2000b) {
